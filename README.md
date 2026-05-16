@@ -56,3 +56,10 @@ Built on Ubuntu Noble, the image installs:
 - `mongosh` 8.0 (MongoDB apt repo)
 - Node.js LTS (NodeSource)
 - AWS CLI v2 (official installer, amd64/arm64 aware)
+
+## Addtional Notes
+
+Designed to run with Joy and Happiness.
+
+Designed to work with very little ceremony.
+
