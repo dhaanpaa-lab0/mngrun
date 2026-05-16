@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ferretdb
+      POSTGRES_PASSWORD: ferretdb
+      POSTGRES_DB: ferretdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ferretdb:
+    image: ghcr.io/ferretdb/ferretdb
+    environment:
+      FERRETDB_POSTGRESQL_URL: postgresql://ferretdb:ferretdb@postgres:5432/ferretdb
+    ports:
+      - "27017:27017"
+    depends_on:
+      - postgres
+
+  mngrun:
+    build: .
+    environment:
+      MONGO_URI: mongodb://ferretdb:27017/dd
+    command: sleep infinity
+    depends_on:
+      - ferretdb
+
+volumes:
+  postgres_data:
