@@ -1,0 +1,11 @@
+services:
+  mongodb:
+    image: mongo:8.0
+
+  mngrun:
+    build: .
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/dd
+    command: sleep infinity
+    depends_on:
+      - mongodb

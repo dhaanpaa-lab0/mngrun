@@ -10,10 +10,7 @@ if [ -z "$MONGO_URI" ]; then
 fi
 
 ## Check for external script
-if [ -z "$EXTERNAL_SCRIPT" ]; then
-    echo "No 'EXTERNAL_SCRIPT' specified"
-    exit 1
-else
+if [ ! -z "$EXTERNAL_SCRIPT" ]; then    
     echo "Using external script '$EXTERNAL_SCRIPT'"
     SCRIPT_FILE="/tmp/$(basename "$EXTERNAL_SCRIPT")"
     curl -fsSL "$EXTERNAL_SCRIPT" -o "$SCRIPT_FILE"
@@ -22,6 +19,9 @@ else
         exit 1
     fi
     echo "Downloaded external script to '$SCRIPT_FILE'"
-    mongosh "$MONGO_URI" "$SCRIPT_FILE"
 fi
+
+## Che
+
+mongosh "$MONGO_URI" "$SCRIPT_FILE"
 exit 0
