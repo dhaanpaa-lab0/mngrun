@@ -12,14 +12,17 @@ A Docker-based MongoDB shell runner. Packages `mongosh` inside a container and r
 # Build the image
 ./build.sh
 
-# Run mongosh interactively against localhost MongoDB
+# Build and run against localhost MongoDB (requires EXTERNAL_SCRIPT or GIT_SCRIPT_REPO)
 ./execDev.sh
 
-# Drop into a bash shell inside the container (for debugging)
+# Build and drop into a bash shell inside the container (for debugging)
 ./execDevShell.sh
 
-# Start the full compose stack (mngrun + MongoDB sidecar) and shell in
+# Start the MongoDB compose stack and shell into the mngrun container
 ./execComposeShell.sh
+
+# Start the FerretDB compose stack and shell into the mngrun container
+./execFerretComposeShell.sh
 ```
 
 `execDev.sh` and `execDevShell.sh` connect to `mongodb://localhost:27017/dd` by default.
@@ -40,13 +43,33 @@ The entrypoint downloads the script to `/tmp/` at runtime and passes it to `mong
 | Variable | Required | Description |
 |---|---|---|
 | `MONGO_URI` | Yes | MongoDB connection string |
-| `EXTERNAL_SCRIPT` | No | URL to a `.js` mongosh script — downloaded and executed at runtime |
+| `EXTERNAL_SCRIPT` | No | URL to a `.js` mongosh script — downloaded to `/tmp/` at runtime and executed |
+| `GIT_SCRIPT_REPO` | No | Git repo URL cloned to `/work/local-scripts/` at runtime; scripts inside can then be referenced as `$1` |
+
+A script must be provided via `EXTERNAL_SCRIPT`, `GIT_SCRIPT_REPO` (with a script path passed as the first argument), or a direct path argument — the entrypoint exits with an error if no script is found.
+
+## FerretDB stack
+
+`compose.ferretdb.yml` runs FerretDB (backed by Postgres) as a MongoDB-compatible sidecar:
+
+```bash
+# Start the FerretDB stack and shell into the mngrun container
+./execFerretComposeShell.sh
+
+# Tear down the FerretDB stack and remove all images and volumes
+./purgeFerretRun.sh
+```
+
+See [FERRETDB_SETUP.md](FERRETDB_SETUP.md) for instructions on enabling authentication and creating the initial admin user.
 
 ## Cleanup
 
 ```bash
-# Tear down the compose stack and remove all images and volumes
+# Tear down the MongoDB compose stack and remove all images and volumes
 ./purgeMongoRun.sh
+
+# Tear down the FerretDB compose stack and remove all images and volumes
+./purgeFerretRun.sh
 ```
 
 ## What's inside the image
@@ -57,7 +80,7 @@ Built on Ubuntu Noble, the image installs:
 - Node.js LTS (NodeSource)
 - AWS CLI v2 (official installer, amd64/arm64 aware)
 
-## Addtional Notes
+## Additional Notes
 
 Designed to run with Joy and Happiness.
 

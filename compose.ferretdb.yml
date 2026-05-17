@@ -1,21 +1,28 @@
 services:
   postgres:
-    image: postgres:16
+    image: ghcr.io/ferretdb/postgres-documentdb:17
     environment:
       POSTGRES_USER: ferretdb
       POSTGRES_PASSWORD: ferretdb
-      POSTGRES_DB: ferretdb
+      POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ferretdb -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   ferretdb:
-    image: ghcr.io/ferretdb/ferretdb
+    image: ghcr.io/ferretdb/ferretdb:2
     environment:
-      FERRETDB_POSTGRESQL_URL: postgresql://ferretdb:ferretdb@postgres:5432/ferretdb
+      FERRETDB_POSTGRESQL_URL: postgresql://ferretdb:ferretdb@postgres:5432/postgres
     ports:
       - "27017:27017"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   mngrun:
     build: .
