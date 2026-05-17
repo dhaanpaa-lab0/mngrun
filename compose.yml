@@ -6,6 +6,7 @@ services:
     build: .
     environment:
       MONGO_URI: mongodb://mongodb:27017/dd
+      GIT_SCRIPT_REPO: https://github.com/dhaanpaa-lab0/mngrun
     command: sleep infinity
     depends_on:
       - mongodb
